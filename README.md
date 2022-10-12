@@ -1,5 +1,5 @@
 # hlw_profile
 
-hlw's personal profile
+hlw's personal profile ![deploy status](https://github.com/hlwhl/hlwhl.github.io/actions/workflows/deploy.yml/badge.svg)
 
-- [start](https://hlwhl.github.io)
+- [enter](https://hlwhl.github.io)
