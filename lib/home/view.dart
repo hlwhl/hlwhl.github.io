@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 
 import 'logic.dart';
@@ -27,6 +28,16 @@ class _HomePageState extends State<HomePage> {
         color: Colors.white,
         child: Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text("powered by"),
+                Image(
+                  image: AssetImage("assets/logo.jpg"),
+                  width: 200,
+                ),
+              ],
+            ),
             const Text(
               "简单描述工作内容\n帮你生成完整周报",
               maxLines: 2,
@@ -36,17 +47,25 @@ class _HomePageState extends State<HomePage> {
               height: 10,
             ),
             const Text("写周报头大? 我来帮你"),
-            TextField(
-              decoration: const InputDecoration(label: Text("api key:")),
-              onChanged: (value) {
-                logic.updateAPIKey(value);
-              },
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: TextField(
+                decoration: const InputDecoration(label: Text("api key:")),
+                onChanged: (value) {
+                  logic.updateAPIKey(value);
+                },
+              ),
             ),
-            TextField(
-              decoration: const InputDecoration(label: Text("简单描述工作内容:")),
-              onChanged: (value) {
-                logic.updatePrompt(value);
-              },
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 500),
+              child: TextField(
+                maxLength: 500,
+                decoration: const InputDecoration(
+                    label: Text("简单描述工作内容:"), hintText: "完成新闻稿的编写及发布"),
+                onChanged: (value) {
+                  logic.updatePrompt(value);
+                },
+              ),
             ),
             MaterialButton(
               child: const Text(
@@ -59,8 +78,8 @@ class _HomePageState extends State<HomePage> {
             ),
             GetBuilder<HomeLogic>(
               builder: (logic) {
-                return Text(logic.response,
-                    style: const TextStyle(fontSize: 12, color: Colors.black));
+                return Expanded(
+                    child: Markdown(selectable: true, data: logic.response));
               },
             ),
           ],

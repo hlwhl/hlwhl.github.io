@@ -1,5 +1,5 @@
+import 'package:dart_openai/openai.dart';
 import 'package:get/get.dart';
-import 'package:openai_client/openai_client.dart';
 
 import 'state.dart';
 
@@ -13,21 +13,21 @@ class HomeLogic extends GetxController {
   String response = "";
 
   init() async {
-    var conf = OpenAIConfiguration(
-      apiKey: _apiKey,
+    OpenAI.apiKey = _apiKey;
+    var completionStream = OpenAI.instance.completion.createStream(
+      model: "text-davinci-003",
+      prompt: "请帮我把以下的工作内容填充为一篇完整的周报,用 markdown 格式以分点叙述的形式输出:$_editingPrompt",
+      maxTokens: 1000,
+      temperature: 0.5,
+      topP: 1,
     );
 
-    final client = OpenAIClient(configuration: conf);
-
-    final respond = await client.completions
-        .create(
-            model: 'text-davinci-003',
-            prompt:
-                "请帮我把以下的工作内容填充为一篇完整的周报,用 markdown 格式以分点叙述的形式输出:$_editingPrompt",
-            maxTokens: 1536)
-        .data;
-    response = respond.choices[0].text;
-    update();
+    var subscription = completionStream.listen((event) {
+      response += event.choices.first.text;
+      update();
+    }, onDone: () {
+    }, onError: (error) {
+    }, cancelOnError: true);
   }
 
   updatePrompt(String prompt) {
